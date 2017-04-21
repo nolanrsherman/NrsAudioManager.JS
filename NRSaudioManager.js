@@ -14,22 +14,22 @@
 
 
 /* ----------------------------------------------*/
-/*             NRSaudioManager                  */
+/*      CLASS:  NRSaudioManager                  */
 /*---------------------------------------------*/
-//The top level container object that manages sound.
+//The top level container Class that manages sound.
 
 function NRSaudioManager() {
 
-  /*Public Instance Variables*/
+  /*PUBLIC INSTANCE VARIABLES*/
   //this.audioStripArray = []; //an array of AudioStrips
   //this.domContainer = null; //the Container for NAM to work with in the DOM.
 
-  /*Private vars*/
+  /*PRIVATE VARS*/
   var ERROR_IDENTIFIER = "NRSaudioManager Error : ";
   var domContainer = null;//the Container for NAM to work with in the DOM.
   var audioStripArray = []; //an array of AudioStrips
 
-  /*privilaged methods*/
+  /*PRIVILAGED METHODS*/
 
   this.getDomContainer = function () {return domContainer};  //returns the domContainer private var
   this.addAudioStrip = function (audioStrip) {
@@ -51,7 +51,7 @@ function NRSaudioManager() {
     }
   }
 
-  /*private methods*/
+  /*PRIVATE METHODS*/
 
   function createDomContainer(){ //insert to the DOM a div with display:none and id = NRSaudioManager-Container.
     // create a new div element
@@ -69,7 +69,7 @@ function NRSaudioManager() {
     //Check if given paramater is actually an audioStrip
     if ( audioStrip instanceof AudioStrip){
       //push audioStrip to the array
-      audioStripArray.push(AudioStrip);
+      audioStripArray.push(audioStrip);
       //add audioStrip into the dom.
       //!!! TODO !!!!////
     }else {
@@ -95,27 +95,101 @@ function NRSaudioManager() {
     }
   }
 
-  /*Constructor instructions.*/
+  /*CONSTRUCTOR INSTRUCTIONS*/
+    //do the following when creating a new instance of this class:
     //Create dom container for <audio> elements belonging to the AudioStrips.
     createDomContainer();
 
 };
 
-//public methods
+/* public methods */
 NRSaudioManager.prototype.myMethod = function () {
     // do something
 }
 
 
 
+
 /* ----------------------------------------------*/
+/*         CLASS:  AudioStrip                   */
 /*---------------------------------------------*/
+//A class that manages Audio Sprites
 
+function AudioStrip(src, name) {
+    /*PUBLIC INSTANCE VARIABLES*/
 
-/* AudioStrip */
-function AudioStrip(param) {
-    this.member = param;
+    /*PRIVATE VARS*/
+    var NAME; //A name for this Audio Strip
+    var SRC; // url string for source for the audio file
+    var ERROR_IDENTIFIER = "AudioStrip Error : ";//Error identifier for use in error handling
+
+    /*PRIVILAGED METHODS*/
+    this.setName = function(name){ //Tries to set the name of this AudioStrip
+      try{
+        prvt_setName(name);
+      }catch(error){
+        console.error(ERROR_IDENTIFIER, error);
+      }
+    }
+    this.getName = function(){ return NAME;} //returns the name of this AudioStrip
+    this.setSrc = function(src){ //Tries to set the name of this AudioStrip
+      try{
+        console.log("Source : "+src);
+        prvt_setSrc(src);
+      }catch(error){
+        console.error(ERROR_IDENTIFIER, error);
+      }
+    }
+    this.getSrc = function(){ return SRC;} //returns the name of this AudioStrip
+
+    /*PRIVATE METHODS*/
+    function prvt_setName(name){
+      //check if name is a string
+      if(typeof name === 'string'){
+        //check if the string is not empty
+        if(name !== ''){
+          NAME = name;
+        } else{
+          throw "The Name of a AudioStrip cannot be empty";
+        }
+      } else {
+        throw "The name given for this AudioStrip must be a of String type.";
+      }
+
+    }
+    function prvt_setSrc(src){
+      //check if name is a string
+      if(typeof src === 'string'){
+        //check if the string is not empty
+        if(name !== ''){
+          //TODO check if String is actually a valid audio source URL.
+          SRC = src;
+        } else {
+          throw "The URL source can not be empty."
+        }
+      } else {
+        throw "The audio source given for this AudioStrip must be a url of String type.";
+      }
+
+    }
+
+    /*CONSTRUCTOR INSTRUCTIONS*/
+    //do the following when creating a new instance of this class:
+    this.setName(name);
+    this.setSrc(src);
+
 }
+
+/* PUBLIC METHODS */
+AudioStrip.prototype.setName = function (name) {
+    // do something
+}
+
+/* ----------------------------------------------*/
+/*          CLASS:  AudioSprite                 */
+/*---------------------------------------------*/
+//A class that represents the individual audio samples in an AudioStrip
+
 
 
 /* ----------------------------------------------*/
