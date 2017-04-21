@@ -1,0 +1,22 @@
+
+
+----- V1.0 -----
+Description:
+NRSaudioManager.JS v1.0 is an audio sprite management system that uses the html5
+<audio> element to play music and sounds for mobile games with high cross-browser
+support. Developers must use a single audio file and use N.A.M's API to create
+audio sprites form that file.
+
+
+Support for the following mobile browsers:
+browsers          version
+Chrome (Android)	32+
+Firefox (Android)	26+
+Firefox OS	       1.2+
+IE Mobile	        11+
+Opera Mobile	     11+
+Safari (iOS)	     7+
+Android Browser  	2.3+
+
+Features:
+-primes audio file

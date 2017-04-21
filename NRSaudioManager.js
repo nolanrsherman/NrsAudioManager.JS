@@ -13,74 +13,125 @@
 */
 
 
+/* ----------------------------------------------*/
+/*             NRSaudioManager                  */
+/*---------------------------------------------*/
+//The top level container object that manages sound.
 
-NRSaudioManager = {
-  audioSrc : {
-    url: '',
-    soundObject: null,
-    ready : false,
-    loadNew : function(url){
-      //set ready to false
-      this.ready = false;
-      //change audioSrc.url to given url
-      this.url = url;
-      //create soundObject form url and add to sound object
-      mySound = new Audio(url);
-      this.soundObject = mySound;
+function NRSaudioManager() {
 
-      /////this.soundObject = document.createElement("audio");
-      /////this.soundObject.src = url;
-      //prime sound object by playing then pausing
-      this.soundObject.play();
-      this.soundObject.pause();
-      //onSoundObjectLoad();
+  /*Public Instance Variables*/
+  //this.audioStripArray = []; //an array of AudioStrips
+  //this.domContainer = null; //the Container for NAM to work with in the DOM.
+
+  /*Private vars*/
+  var ERROR_IDENTIFIER = "NRSaudioManager Error : ";
+  var domContainer = null;//the Container for NAM to work with in the DOM.
+  var audioStripArray = []; //an array of AudioStrips
+
+  /*privilaged methods*/
+
+  this.getDomContainer = function () {return domContainer};  //returns the domContainer private var
+  this.addAudioStrip = function (audioStrip) {
+    try {
+      pushAudioStrip(audioStrip);
     }
-  },
-
-  audioSprites : [], //holds audioSprite objects
-
-  newAudioSprite: function(){//creates new audioSprite
-
-  },
-}
-
-async function onSoundObjectLoad(){
-  setTimeout(function(){
-    var isReady;
-    var buffLength = 0;
-    var audLength = NRSaudioManager.audioSrc.soundObject.duration;
-    try { buffLength = NRSaudioManager.audioSrc.soundObject.buffered.end(0)  }
-    catch(err) {
-      console.log("sound not ready");
-      isReady = false
+    catch (error) {
+      console.error(ERROR_IDENTIFIER, error);
     }
-    console.log(buffLength + ":" + audLength)
-    if()
-  }, 3000);
-}
 
-/*
-async function onSoundObjectLoad(){
-  while(  NRSaudioManager.audioSrc.ready == false){
-    var isReady;
-     var buffLength = 0;
-    try { buffLength = NRSaudioManager.audioSrc.soundObject.buffered.end(0)  }
-    catch(err) {
-      console.log("sound not ready");
-      isReady = false
-    }
-    var audLength = NRSaudioManager.audioSrc.soundObject.duration;
-    if(buffLength >= audLength){
-      NRSaudioManager.audioSrc.ready = true;
-      console.log("sound ready");
-      break;
-    } else {
-    }
-  //after the times are equal
-  //set audioSrc.ready = true;
   }
+  this.getAudioStrips = function() {return audioStripArray};
+  this.getAudioStripByIndex = function(index) {
+    try {
+      return findAudioStripByIndex(index); //return the audio strip at that index
+    }
+    catch (error) {
+      console.error(ERROR_IDENTIFIER, error);
+    }
+  }
+
+  /*private methods*/
+
+  function createDomContainer(){ //insert to the DOM a div with display:none and id = NRSaudioManager-Container.
+    // create a new div element
+    var newDiv = document.createElement("div");
+    //add ID to div
+    newDiv.setAttribute("id", "NRSaudioManager-Container");
+    //add display:none to style.
+    newDiv.style.display = "none";
+    // add the newly created element into the DOM
+    domContainer = newDiv;
+    document.body.append(newDiv);
+  }
+
+  function pushAudioStrip(audioStrip){ //Pushes a new audioStrip to the array. throws an error if paramater is not an audioStrip.
+    //Check if given paramater is actually an audioStrip
+    if ( audioStrip instanceof AudioStrip){
+      //push audioStrip to the array
+      audioStripArray.push(AudioStrip);
+      //add audioStrip into the dom.
+      //!!! TODO !!!!////
+    }else {
+      throw "The object passed is not an instance of AudioStrip";
+    }
+  }
+
+  function findAudioStripByIndex(index){ //Pushes a new audioStrip to the array. throws an error if paramater is not an audioStrip.
+    //Check if given paramater is an integer
+    if ( isInt(index) ){
+
+      //check if there was a strip at the given index.
+      if( (index in audioStripArray) ){
+
+        return audioStripArray[index];//return the audio strip at the index
+
+      }else {
+        throw "There is no AudioStrip at the given index."
+      }
+
+    }else {
+      throw "The value given for index is not an integer.";
+    }
+  }
+
+  /*Constructor instructions.*/
+    //Create dom container for <audio> elements belonging to the AudioStrips.
+    createDomContainer();
+
+};
+
+//public methods
+NRSaudioManager.prototype.myMethod = function () {
+    // do something
 }
-*/
+
+
+
+/* ----------------------------------------------*/
+/*---------------------------------------------*/
+
+
+/* AudioStrip */
+function AudioStrip(param) {
+    this.member = param;
+}
+
+
+/* ----------------------------------------------*/
+/*                Other Functions               */
+/*---------------------------------------------*/
+AudioManagerTools = {}; // container for helper Functions
+
+//@author: user Krisk of StackOverflow
+this.isInt = function(value) { //returns true if given value is and integer and is not NaN.
+  if (isNaN(value)) {
+    return false;
+  }
+  var x = parseFloat(value);
+  return (x | 0) === x;
+}
+
 
 /*debug tools, delete on compression*/
 stopWatch = {

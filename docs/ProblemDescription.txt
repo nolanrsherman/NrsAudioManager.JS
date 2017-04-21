@@ -1,0 +1,112 @@
+Mozilla lays out how this program should work in great detail.
+https://developer.mozilla.org/en-US/docs/Games/Techniques/Audio_for_Web_Games
+
+//-------------  Auto play  ----------------//
+              By: Mozilla
+
+Many mobile browsers will simply ignore any requests made by your game to automatically play audio; instead playback for
+audio needs to be started by a user-initiated event. This means you will have to structure your audio playback to take
+account of that. This is usually mitigated against by loading the audio in advance and priming it on a user-initiated event.
+
+For more passive audio auto play, for example background music that starts as soon as a game loads, one trick is to detect
+ *any* user initiated event and start playback then. For other more active sounds that are to be used during the game we
+ could consider priming them as soon as something like a start button is pressed.
+
+To prime audio like this we want to play a part of it; for this reason it is useful to include a moment of silence at the
+end of your audio sample. Jumping to, playing and pausing that silence will mean we can now use JavaScript to play that file
+ at arbitrary points.
+
+ *Note: Playing part of your file at zero volume could also work if the browser allows you to change volume (see below). Also
+ note that playing and immediately pausing your audio does not guarantee that a small piece of audio won't be played.
+
+ *Note: Adding a web app to your mobile home screen may change its capabilities. In the case of autoplay on iOS, this appears
+ to be the case currently. If possible, you should try your code on several devices and platforms to see how it works.
+--------------
+NOTES:
+By: Nolan R Sherman.
+-autoplay not aloud
+-Playback for audio must be started by user event
+-trick 1: prime audio on start button or first user event detected.
+-trick 2: prime by playing an empty space at end of audio file
+
+
+
+
+ //-------------  Volume  ----------------//
+               By: Mozilla
+
+Programmatic volume control may be disabled in mobile browsers. The reason often given is that the user should be in control
+of the volume at the OS level and this shouldn't be overridden.
+
+--------------
+NOTES:
+By: Nolan R Sherman.
+-We wont be able to control volume for unsupported platforms
+-Audio sprites should be saved at the correct volume in relevance to other audio sprites.
+
+
+
+ //------------- Buffering and preloading  ----------------//
+               By: Mozilla
+
+Likely as an attempt to mitigate runaway mobile network data use, we also often find that buffering is disabled before playback
+has been initiated. Buffering is the process of the browser downloading the media in advance, which we often need to do to ensure
+smooth playback.
+
+Note: In many ways the concept of buffering is an outdated one. As long as byte-range requests are accepted (which is the default
+behavior), we should be able to jump to a specific point in the audio without having to download the preceding content. However
+preloading is still useful; without it, there would always need to be some client-server communication required before playing
+can commence.
+--------------
+NOTES:
+By: Nolan R Sherman.
+-Preloading not possible on some systems *BEFORE PLAYBACK INITIATED
+-^possible solution: prime audio file (mentioned in first section.)
+-According to Mozilla buffering is outdated, and we shouldn't have to worry about need to load everything in between audio sprites
+we jump too. (should we account for this or not?)
+
+QUESTION: If I prime an audio file from the end of the file, will the browser only load everything that comes after it? That is what
+I have noticed in some audio players. NEEDS TESTING. Maybe silent space in file will have to go at beginning and not the end.
+
+
+ //------------- Concurrent audio playback  ----------------//
+               By: Mozilla
+
+A requirement of many games is the need to play more than one piece of audio at the same time; for example, there might be background
+ music playing along with sound effects for various things happening in the game. Although the situation is soon going to get better
+  with the adoption of the Web Audio API, the current most widely-supported method — using the vanilla <audio> element — results in
+  patchy results on mobile devices.
+  --------------
+  NOTES:
+  By: Nolan R Sherman.
+  -As a universal tool, concurrent playback is not possible
+  -feature to add in the future for supporting browsers.
+  -instead possibly a que that keeps track of when audio files should be played and the top most audio snippet gets played.
+
+
+ //------------- Testing and support  ----------------//
+               By: Mozilla
+
+Here's a table that shows what mobile platforms support the features talked about above.
+
+Mobile support for web audio features:
+
+Mobile browser	 Version	  Concurrent play	  Autoplay	 Volume adjusting	 Preload
+Chrome (Android)	  32+	           Y	            N	              N	            N
+Firefox (Android)	  26+	           Y	            Y  	            N	            N
+Firefox OS	       1.2+	           Y	            Y	              Y	            Y
+IE Mobile	          11+	            Y           	Y	               N	          Y
+Opera Mobile	       11+	          N	            N	              N           	N
+Safari (iOS)	       7+          	Y/N*	          N	              N	            Y
+Android Browser   	2.3+	          N	            N	              N	            N
+
+Note: Safari 7 has issues playing if you try and start all pieces of audio simultaneously. If you stagger playback you may have some degree of success.
+Note: Concurrent audio playback is tested using our concurrent audio test example, where we attempt to play three pieces of audio at the same time using the standard audio API.
+Note: Simple autoplay functionality is tested with our autoplay test example.
+Note: Volume changeability is tested with our volume test example.
+
+--------------
+NOTES:
+By: Nolan R Sherman.
+-First phase of this audio manager will support all the browsers above with the most minimum features.
+no concurrent playback, no auto play (workaround available), no volume adjusting, preloading (workaround available)
