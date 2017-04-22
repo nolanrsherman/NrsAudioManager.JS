@@ -132,15 +132,14 @@ function AudioStrip(src, name) {
       }
     }
     this.getName = function(){ return NAME;} //returns the name of this AudioStrip
-    this.setSrc = function(src){ //Tries to set the name of this AudioStrip
+    this.setSrc = function(src){ //Tries to set the src of this AudioStrip
       try{
-        console.log("Source : "+src);
         prvt_setSrc(src);
       }catch(error){
         console.error(ERROR_IDENTIFIER, error);
       }
     }
-    this.getSrc = function(){ return SRC;} //returns the name of this AudioStrip
+    this.getSrc = function(){ return SRC;} //returns the src of this AudioStrip
 
     /*PRIVATE METHODS*/
     function prvt_setName(name){
@@ -192,40 +191,44 @@ AudioStrip.prototype.setName = function (name) {
 /*          CLASS:  AudioSprite                 */
 /*---------------------------------------------*/
 //A class that represents the individual audio samples in an AudioStrip
-function AudioSprite(){
+function AudioSprite(beginTime, endTime){
   /*PUBLIC INSTANCE VARIABLES*/
   /*PRIVATE VARS*/
   var ERROR_IDENTIFIER = "AudioSprite Error : ";//Error identifier for use in error handling
   var BEGIN_TIME;
   var END_TIME;
   var START_TIME;
+
   /*PRIVILAGED METHODS*/
-  this.setBeginTime = function(milliseconds){//set begging time of tihs AudioSprite in the audio file.
-    if(AudioManagerTools.isInt(milliseconds)){
-      BEGIN_TIME = milliseconds;
+  this.setBeginTime = function(seconds){//set begging time of tihs AudioSprite in the audio file.
+    if(AudioManagerTools.isInt(seconds)){
+      BEGIN_TIME = seconds;
     } else {
-      console.error(ERROR_IDENTIFIER, "value passed to setBeginTime(milliseconds) is not of type integer or is NaN");
+      console.error(ERROR_IDENTIFIER, "value passed to setBeginTime(seconds) is not of type integer or is NaN");
     }
   }
   this.getBeginTime = function(){return BEGIN_TIME;}//get the begging time of tihs AudioSprite in the audio file.
-  this.setEndTime = function(milliseconds){ // Set the end time of tihs AudioSprite in the audio file.
-    if(AudioManagerTools.isInt(milliseconds)){
-      END_TIME = milliseconds;
+  this.setEndTime = function(seconds){ // Set the end time of tihs AudioSprite in the audio file.
+    if(AudioManagerTools.isInt(seconds)){
+      END_TIME = seconds;
     } else {
-      console.error(ERROR_IDENTIFIER, "value passed to setBeginTime(milliseconds) is not of type integer or is NaN");
+      console.error(ERROR_IDENTIFIER, "value passed to setBeginTime(seconds) is not of type integer or is NaN");
     }
   }
   this.getEndTime = function(){return END_TIME;}// Get the end time of tihs AudioSprite in the audio file.
-  this.setStartTime = function(milliseconds){
-    if(AudioManagerTools.isInt(milliseconds)){
-      START_TIME = milliseconds;
+  this.setStartTime = function(seconds){
+    if(AudioManagerTools.isInt(seconds)){
+      START_TIME = seconds;
     } else {
-      console.error(ERROR_IDENTIFIER, "value passed to setBeginTime(milliseconds) is not of type integer or is NaN");
+      console.error(ERROR_IDENTIFIER, "value passed to setBeginTime(seconds) is not of type integer or is NaN");
     }
   }
   this.getStartTime = function(){return START_TIME;}
+
   /*PRIVATE METHODS*/
   /*CONSTRUCTOR INSTRUCTIONS*/
+  this.setBeginTime(beginTime);
+  this.setEndTime(endTime);
 }
 
 /* PUBLIC METHODS */
