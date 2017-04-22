@@ -28,10 +28,20 @@ function NRSaudioManager() {
   var ERROR_IDENTIFIER = "NRSaudioManager Error : ";
   var domContainer = null;//the Container for NAM to work with in the DOM.
   var audioStripArray = []; //an array of AudioStrips
-
+  var currentAudioStrip = null;
+  var audioQue = [];
   /*PRIVILAGED METHODS*/
 
   this.getDomContainer = function () {return domContainer};  //returns the domContainer private var
+  this.setCurrentAudioStrip = function (audioStrip) {
+    if( isAudioStrip(audioStrip) ){
+      currentAudioStrip = audioStrip;
+    } else {
+      console.error(ERROR_IDENTIFIER, "The object passed to 'setCurrentAudioStrip()' is not of type AudioStrip");
+    }
+
+  }
+  this.getCurrentAudioStrip = function() {return currentAudioStrip};
   this.addAudioStrip = function (audioStrip) {
     try {
       pushAudioStrip(audioStrip);
@@ -52,7 +62,13 @@ function NRSaudioManager() {
   }
 
   /*PRIVATE METHODS*/
-
+  function isAudioStrip(audioStrip){//checks if given strip is instance of AudioStrip. @RETURN boolean
+    if ( audioStrip instanceof AudioStrip){
+      return true;
+    }else {
+      return false;
+    }
+  }
   function createDomContainer(){ //insert to the DOM a div with display:none and id = NRSaudioManager-Container.
     // create a new div element
     var newDiv = document.createElement("div");
@@ -95,6 +111,7 @@ function NRSaudioManager() {
     }
   }
 
+
   /*CONSTRUCTOR INSTRUCTIONS*/
     //do the following when creating a new instance of this class:
     //Create dom container for <audio> elements belonging to the AudioStrips.
@@ -123,6 +140,8 @@ function AudioStrip(src, name) {
     var SRC = null; // url string for source for the audio file
     var ERROR_IDENTIFIER = "AudioStrip Error : ";//Error identifier for use in error handling
     var AUDIO = document.createElement('audio');
+    var AudioSpriteArray = [];
+
     /*PRIVILAGED METHODS*/
     this.setName = function(name){ //Tries to set the name of this AudioStrip
       try{
@@ -140,8 +159,23 @@ function AudioStrip(src, name) {
       }
     }
     this.getSrc = function(){ return SRC;} //returns the src of this AudioStrip
-
+    this.addAudioSprite = function(audioSprite){
+      if( ( AudioManagerTools.isAudioSprite(audioSprite) ) ){//if param is AudioSprite
+        prvt_addSingleSprite(audioSprite);//add a single audio sprite
+      }else if( ( AudioManagerTools.isArray(audioSprite) ) ){ //if param is array
+        prvt_addAudioSpriteArray(audioSprite);// add an array of audio sprites
+      } else {
+        console.error(ERROR_IDENTIFIER, "The object passed to 'addAudioSprite()' must be an AudioSprite or an Array of AudioSprites.");
+      }
+    }
+    this.getAudioSprites = function(){return AudioSpriteArray;}
     /*PRIVATE METHODS*/
+    function prvt_addSingleSprite(audioSprite){
+      AudioSpriteArray[audioSprite.getName()]=audioSprite;
+    }
+    function prvt_addAudioSpriteArray(audioSprite){
+      audioSprite.forEach( prvt_addSingleSprite );
+    }
     function prvt_setName(name){
       //check if name is a string
       if(typeof name === 'string'){
@@ -191,15 +225,24 @@ AudioStrip.prototype.setName = function (name) {
 /*          CLASS:  AudioSprite                 */
 /*---------------------------------------------*/
 //A class that represents the individual audio samples in an AudioStrip
-function AudioSprite(beginTime, endTime){
+function AudioSprite(name, beginTime, endTime){
   /*PUBLIC INSTANCE VARIABLES*/
   /*PRIVATE VARS*/
   var ERROR_IDENTIFIER = "AudioSprite Error : ";//Error identifier for use in error handling
   var BEGIN_TIME;
   var END_TIME;
   var START_TIME;
+  var NAME = 'noName'; //A name for this Audio Strip
 
   /*PRIVILAGED METHODS*/
+  this.setName = function(name){
+    if( AudioManagerTools.isString(name) ){
+      NAME = name;
+    } else {
+      console.error(ERROR_IDENTIFIER, "The value passed to 'setName()' is not of type String.");
+    }
+  }
+  this.getName = function(){return NAME;}
   this.setBeginTime = function(seconds){//set begging time of tihs AudioSprite in the audio file.
     if(AudioManagerTools.isInt(seconds)){
       BEGIN_TIME = seconds;
@@ -227,6 +270,7 @@ function AudioSprite(beginTime, endTime){
 
   /*PRIVATE METHODS*/
   /*CONSTRUCTOR INSTRUCTIONS*/
+  this.setName(name);
   this.setBeginTime(beginTime);
   this.setEndTime(endTime);
 }
@@ -248,6 +292,38 @@ AudioManagerTools.isInt = function(value) { //returns true if given value is and
   return (x | 0) === x;
 }
 
+AudioManagerTools.isString = function(value) {
+  if(typeof value === 'string'){
+    return true;
+  } else{
+    return false;
+  }
+}
+
+AudioManagerTools.isAudioStrip = function(audioStrip){//checks if given strip is instance of AudioStrip. @RETURN boolean
+  if ( audioStrip instanceof AudioStrip){
+    return true;
+  }else {
+    return false;
+  }
+}
+
+AudioManagerTools.isAudioSprite = function(audioSprite){//checks if given strip is instance of AudioStrip. @RETURN boolean
+  if ( audioSprite instanceof AudioSprite){
+    return true;
+  }else {
+    return false;
+  }
+}
+
+AudioManagerTools.isArray = function(value){//checks if given value is an Array. @RETURN boolean
+  if ( value instanceof Array){
+    return true;
+  }else {
+    console.log(value);
+    return false;
+  }
+}
 
 /*debug tools, delete on compression*/
 stopWatch = {

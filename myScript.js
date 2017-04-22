@@ -1,17 +1,43 @@
-//first, Create instance of Audio manager
-var myAudioManager = new NRSaudioManager();
 
-//next create an audio strip.
+//first,  create an audio strip.
 var myAudioStrip = new AudioStrip("countdown.mp3", "Strip 1");
 
-//create sound sprites
-var nine = new AudioSprite(0,1);
-var eight = new AudioSprite(2,3);
-var seven = new AudioSprite(4,5);
-var six = new AudioSprite(6, 7);
-var five = new AudioSprite(8,9);
-var four = new AudioSprite(10,11);
-var three = new AudioSprite(12,13);
-var two = new AudioSprite(14,15);
-var one = new AudioSprite(16,17);
-var zero = new AudioSprite(18,19);
+//create sound sprites by adding individually
+/*
+myAudioStrip.addAudioSprite( new AudioSprite('nine', 0, 1) );
+myAudioStrip.addAudioSprite( new AudioSprite('eight', 2,3) );
+myAudioStrip.addAudioSprite( new AudioSprite('seven', 4,5) );
+myAudioStrip.addAudioSprite( new AudioSprite('six', 6, 7) );
+myAudioStrip.addAudioSprite( new AudioSprite('five', 8,9) );
+myAudioStrip.addAudioSprite( new AudioSprite('four', 10,11) );
+myAudioStrip.addAudioSprite( new AudioSprite('three', 12,13) );
+myAudioStrip.addAudioSprite( new AudioSprite('two', 14,15) );
+myAudioStrip.addAudioSprite( new AudioSprite('one', 16,17) );
+myAudioStrip.addAudioSprite( new AudioSprite('zero', 18,19) );
+*/
+//or
+
+//create sound sprites by passing an array of AudioSprites
+var mySprites =  [
+  new AudioSprite('nine', 0, 1),
+  new AudioSprite('eight', 2,3),
+  new AudioSprite('seven', 4,5),
+  new AudioSprite('six', 6, 7),
+  new AudioSprite('five', 8,9),
+  new AudioSprite('four', 10,11),
+  new AudioSprite('three', 12,13),
+  new AudioSprite('two', 14,15),
+  new AudioSprite('one', 16,17),
+  new AudioSprite('zero', 18,19)
+  new AudioSprite('background', 0,19)
+]
+myAudioStrip.addAudioSprite( mySprites );
+
+//Create instance of Audio manager
+var myAudioManager = new NRSaudioManager();
+
+//set the current audio strip to your audio strip
+myAudioManager.setCurrentAudioStrip(myAudioStrip);
+
+//start background music.
+myAudioManager.playInBackground('background');
