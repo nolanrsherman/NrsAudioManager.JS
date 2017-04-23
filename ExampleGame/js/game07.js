@@ -182,9 +182,11 @@ v.08
 			//if gun is fired
 			if(reticle.isFired){
 
-					reticle.shotSound.pause();
-					reticle.shotSound.currentTime = 0.0;
-					reticle.shotSound.play();
+					//reticle.shotSound.pause();
+					//reticle.shotSound.currentTime = 0.0;
+					//reticle.shotSound.play();
+
+					myAudioManager.play('one');
 
 
 				//check if hit target
