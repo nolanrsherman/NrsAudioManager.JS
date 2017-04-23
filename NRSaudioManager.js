@@ -12,6 +12,19 @@
 *Github url:
 */
 
+/*     @TODO     */
+/*
+* -refactor code, espeically NRSaudioManager class
+* -implement loading audio on first user interaction if running on a mobile browser.
+*/
+
+/*     @ISSUES     */
+/*
+* - error occurs sometimes when multiple audio sprites are called rapidly, the audio starts from the begining of file and not the begining of sprite.
+*
+*/
+
+
 
 /* ----------------------------------------------*/
 /*      CLASS:  NRSaudioManager                  */
@@ -178,6 +191,8 @@ function NRSaudioManager() {
 
     if (audioQue.length == 0 && backgroundMusicSprite != null) { //if the audioQue is empty and backgroundMusicSprite is set
       addSpriteToQue(backgroundMusicSprite);
+    } else if(audioQue.length == 0 && backgroundMusicSprite == null){ //else if audioQue is empty and background is not set
+      currentAudioStrip.getAudio().pause(); //pause the audio because nothing is playing.
     }
   }
 
@@ -203,11 +218,11 @@ function NRSaudioManager() {
       audio.play();//play audio
       quedAudio.isPlaying = true;
 
-      console.log('previously called audio playing, time: '+ sprite.getBeginTime() + ( curTime - callTime) );
+      console.log('previously called audio playing, time: '+ sprite.getBeginTime() + ( curTime - callTime) + 'QuedAUdio: ');
+      console.log(quedAudio );
     } else if(quedAudio.isPlaying){//if qued audio is playing
       //wee need to check if its time to stop it.
       if( audio.currentTime >= quedAudio.audioSprite.getEndTime() ){
-        audio.pause();
         audioQue.shift();
       }
     }
@@ -369,6 +384,7 @@ AudioStrip.prototype.setName = function (name) {
 //A class that represents the individual audio samples in an AudioStrip
 function AudioSprite(name, beginTime, endTime){
   /*PUBLIC INSTANCE VARIABLES*/
+  this.name = ''; //a visible name for console.
   /*PRIVATE VARS*/
   var ERROR_IDENTIFIER = "AudioSprite Error : ";//Error identifier for use in error handling
   var BEGIN_TIME;
@@ -380,6 +396,7 @@ function AudioSprite(name, beginTime, endTime){
   this.setName = function(name){
     if( AudioManagerTools.isString(name) ){
       NAME = name;
+      this.name = name;
     } else {
       console.error(ERROR_IDENTIFIER, "The value passed to 'setName()' is not of type String.");
     }

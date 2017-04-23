@@ -178,6 +178,8 @@ function NRSaudioManager() {
 
     if (audioQue.length == 0 && backgroundMusicSprite != null) { //if the audioQue is empty and backgroundMusicSprite is set
       addSpriteToQue(backgroundMusicSprite);
+    } else if(audioQue.length == 0 && backgroundMusicSprite == null){ //else if audioQue is empty and background is not set
+      currentAudioStrip.getAudio().pause(); //pause the audio because nothing is playing.
     }
   }
 
@@ -207,7 +209,6 @@ function NRSaudioManager() {
     } else if(quedAudio.isPlaying){//if qued audio is playing
       //wee need to check if its time to stop it.
       if( audio.currentTime >= quedAudio.audioSprite.getEndTime() ){
-        audio.pause();
         audioQue.shift();
       }
     }
