@@ -30,12 +30,16 @@ function NRSaudioManager() {
   var audioStripArray = []; //an array of AudioStrips
   var currentAudioStrip = null;
   var audioQue = [];
+  var backgroundMusicSprite = null;
+  var startTime = 0;
+  //var currentTime = 0;
   /*PRIVILAGED METHODS*/
 
   this.getDomContainer = function () {return domContainer};  //returns the domContainer private var
   this.setCurrentAudioStrip = function (audioStrip) {
     if( isAudioStrip(audioStrip) ){
       currentAudioStrip = audioStrip;
+      //attachEventLoop( audioStrip.getAudio() ); //attach the event loop to the currentAudioStrip's audio object.
     } else {
       console.error(ERROR_IDENTIFIER, "The object passed to 'setCurrentAudioStrip()' is not of type AudioStrip");
     }
@@ -59,6 +63,37 @@ function NRSaudioManager() {
     catch (error) {
       console.error(ERROR_IDENTIFIER, error);
     }
+  }
+
+/*this.play = function(){ //play the audio of the currentAudioStrip
+    currentAudioStrip.getAudio().play();
+  }*/
+
+  this.play = function(spriteName){ //play the audio of the currentAudioStrip
+      if( AudioManagerTools.isString(spriteName)){
+        if ( AudioManagerTools.isAudioSprite( currentAudioStrip.getAudioSprites()[spriteName] )  ){
+            audioQue.unshift(new QuedAudio(new Date().getTime(), currentAudioStrip.getAudioSprites()[spriteName]) );//add new QuedAudio to audioQue
+            console.log(audioQue);
+          }else {
+            console.error(ERROR_IDENTIFIER, "No AudioSprite was found for the value '"+spriteName+"' passed to 'play()'.")
+          }
+        }else {
+          console.error(ERROR_IDENTIFIER, "Value passed to 'play()' is not of type String");
+        }
+    }
+
+  this.setBackgroundMusic = function(nameOfSprite){
+    if( AudioManagerTools.isString(nameOfSprite)){
+      if ( AudioManagerTools.isAudioSprite( currentAudioStrip.getAudioSprites()[nameOfSprite] )  ){
+        backgroundMusicSprite = nameOfSprite;
+      }else {
+        console.error(ERROR_IDENTIFIER, "No AudioSprite was found for the value '"+nameOfSprite+"' passed to 'setBackgroundMusic()'.")
+      }
+
+    } else {
+      console.error(ERROR_IDENTIFIER, "Value passed to 'setBackgroundMusic()' is not of type String");
+    }
+
   }
 
   /*PRIVATE METHODS*/
@@ -111,11 +146,95 @@ function NRSaudioManager() {
     }
   }
 
+  function attachEventLoop(audio){
+    audio.addEventListener('timeupdate', eventLoop, false);
+  }
+
+  function AudioManagerLoop(){//event loop for the audio
+    var currentTime = ( new Date().getTime() ) - startTime;
+    //console.log(currentTime);
+    if(currentAudioStrip.getAudio().paused){//if audio is paused
+
+      if(currentAudioStrip.getAudioSprites().length > 0){//if que has atleast one AudioSprite
+        //play next audio in the que
+        audioQue[0]
+      }
+      //if que is empty and background is set, play background.
+      playSprite(backgroundMusicSprite);
+    } else if (!currentAudioStrip.getAudio().paused){//if audio is not paused
+
+      //if que is empty and background is set, listenForPause
+      listenForPause(backgroundMusicSprite);
+    }
+  }
+
+  function AudioManagerLoop2(){//event loop for the audio
+    var currentTime = ( new Date().getTime() ) - startTime;
+    //console.log(currentTime);
+    if(audioQue.length > 0){//if que has atleast one AudioSprite
+      //console.log('playing audio que.');
+      playQuedAudio(audioQue[0]);
+    }
+  }
+
+  function playQuedAudio(quedAudio){
+    var sprite = quedAudio.audioSprite;
+    var calledAtTime = quedAudio.calledAtTime;
+    var audio = currentAudioStrip.getAudio();
+
+    if(!quedAudio.wasPreviouslyStarted){//if this audio was not previously started
+      if(audioQue.length > 1){//if the que has more than 1, then the last one might have been playing, need to set to false. (note. might need to set all in que to false besides [0])
+        audioQue[1].isPlaying = false;
+      }
+      if(!quedAudio.isPlaying){//if qued audio is not playing
+        audio.currentTime = sprite.getBeginTime();
+        audio.play();//play audio
+      }
+      quedAudio.isPlaying = true;
+      quedAudio.wasPreviouslyStarted = true;//set to true.
+    } else if(quedAudio.wasPreviouslyStarted && !quedAudio.isPlaying){//else if this audio was previousoly started but is not currently playing
+      var curTime = new Date().getTime() / 1000; //convert current time to seconds
+      var callTime = quedAudio.calledAtTime / 1000;//convert calledAtTime to seconds
+      audio.currentTime = sprite.getBeginTime() + ( curTime - callTime); //begin audio at : sprite begin time + (current time - called at Time)
+      audio.play();//play audio
+      quedAudio.isPlaying = true;
+
+      console.log('previously called audio playing, time: '+ sprite.getBeginTime() + ( curTime - callTime) );
+    } else if(quedAudio.isPlaying){//if qued audio is playing
+      //wee need to check if its time to stop it.
+      if( audio.currentTime >= quedAudio.audioSprite.getEndTime() ){
+        audio.pause();
+        audioQue.shift();
+      }
+    }
+
+  }
+
+  function playSprite(spriteName){ //play the sprite with the given name.
+    var sprite = currentAudioStrip.getAudioSprites()[spriteName];//get the audio sprite with the given name in the current audioStrips sprite array
+    var audio = currentAudioStrip.getAudio(); //get the audio of the currentAudioStrip
+
+    audio.currentTime = sprite.getBeginTime();
+    audio.play();//play audio
+
+
+  }
+
+  function listenForPause(spriteName){
+    var sprite = currentAudioStrip.getAudioSprites()[spriteName];//get the audio sprite with the given name in the current audioStrips sprite array
+    var audio = currentAudioStrip.getAudio(); //get the audio of the currentAudioStrip
+
+    if( audio.currentTime >= sprite.getEndTime() ){
+      audio.pause();
+    }
+  }
 
   /*CONSTRUCTOR INSTRUCTIONS*/
     //do the following when creating a new instance of this class:
     //Create dom container for <audio> elements belonging to the AudioStrips.
+    startTime = new Date().getTime();
     createDomContainer();
+    setInterval(AudioManagerLoop2, 200);
 
 };
 
@@ -169,6 +288,11 @@ function AudioStrip(src, name) {
       }
     }
     this.getAudioSprites = function(){return AudioSpriteArray;}
+    this.getAudio = function(){return AUDIO;}
+
+    this.getBackgroundSprite = function() {return backgroundMusicSprite;}
+
+
     /*PRIVATE METHODS*/
     function prvt_addSingleSprite(audioSprite){
       AudioSpriteArray[audioSprite.getName()]=audioSprite;
@@ -276,6 +400,17 @@ function AudioSprite(name, beginTime, endTime){
 }
 
 /* PUBLIC METHODS */
+
+/* ----------------------------------------------*/
+/*                Class QuedAudio              */
+/*---------------------------------------------*/
+function QuedAudio(calledAtTime, audioSprite){
+  this.calledAtTime = calledAtTime;
+  this.audioSprite = audioSprite;
+  this.isPlaying = false;
+  this.wasPreviouslyStarted = false;
+};
+
 
 /* ----------------------------------------------*/
 /*                Other Functions               */

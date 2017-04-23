@@ -9,7 +9,8 @@ myAudioStrip.addAudioSprite( new AudioSprite('eight', 2,3) );
 myAudioStrip.addAudioSprite( new AudioSprite('seven', 4,5) );
 myAudioStrip.addAudioSprite( new AudioSprite('six', 6, 7) );
 myAudioStrip.addAudioSprite( new AudioSprite('five', 8,9) );
-myAudioStrip.addAudioSprite( new AudioSprite('four', 10,11) );
+myAudioStrip.addAudioSprite( new AudioSprite('fou
+r', 10,11) );
 myAudioStrip.addAudioSprite( new AudioSprite('three', 12,13) );
 myAudioStrip.addAudioSprite( new AudioSprite('two', 14,15) );
 myAudioStrip.addAudioSprite( new AudioSprite('one', 16,17) );
@@ -28,7 +29,7 @@ var mySprites =  [
   new AudioSprite('three', 12,13),
   new AudioSprite('two', 14,15),
   new AudioSprite('one', 16,17),
-  new AudioSprite('zero', 18,19)
+  new AudioSprite('zero', 18,19),
   new AudioSprite('background', 0,19)
 ]
 myAudioStrip.addAudioSprite( mySprites );
@@ -40,4 +41,4 @@ var myAudioManager = new NRSaudioManager();
 myAudioManager.setCurrentAudioStrip(myAudioStrip);
 
 //start background music.
-myAudioManager.playInBackground('background');
+myAudioManager.setBackgroundMusic('three');
