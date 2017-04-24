@@ -10,6 +10,31 @@ v.08
 8.
 9.
 **/
+
+//sound
+
+//first,  create an audio strip.
+var myAudioStrip = new AudioStrip("sounds/soundStrip.mp3", "Strip 1");
+
+//create sound sprites by passing an array of AudioSprites
+var mySprites =  [
+//  new AudioSprite('music', 0.313, 9.242),
+//  new AudioSprite('pop', 0.182, 0.220)
+	new AudioSprite('music', 1, 9.242),
+  new AudioSprite('pop', 0, 1)
+]
+myAudioStrip.addAudioSprite( mySprites );
+
+//Create instance of Audio manager
+var myAudioManager = new NRSaudioManager();
+
+//set the current audio strip to your audio strip
+myAudioManager.setCurrentAudioStrip(myAudioStrip);
+
+//start background music.
+myAudioManager.setBackgroundMusic('music');
+
+
 /*----------------------------------------/
 ///////////////Variables//////////////////
 /--------------------------------------*/
@@ -186,7 +211,7 @@ v.08
 					//reticle.shotSound.currentTime = 0.0;
 					//reticle.shotSound.play();
 
-					myAudioManager.play('one');
+					myAudioManager.play('pop');
 
 
 				//check if hit target
