@@ -18,7 +18,7 @@ myAudioStrip.addAudioSprite( new AudioSprite('zero', 18,19) );
 */
 //or
 
-//create sound sprites by passing an array of AudioSprites
+//create sound sprites by passing an array of Aud  ioSprites
 var mySprites =  [
   new AudioSprite('nine', 0, 1),
   new AudioSprite('eight', 2,3),
