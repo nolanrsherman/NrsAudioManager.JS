@@ -45,6 +45,7 @@ function NRSaudioManager() {
   var audioQue = [];
   var backgroundMusicSprite = null;
   var startTime = 0;
+  var wasBufferedOnTouch = false;
   //var currentTime = 0;
   /*PRIVILAGED METHODS*/
 
@@ -52,6 +53,7 @@ function NRSaudioManager() {
   this.setCurrentAudioStrip = function (audioStrip) {
     if( isAudioStrip(audioStrip) ){
       currentAudioStrip = audioStrip;
+      bufferAudioOnTouch();
       //attachEventLoop( audioStrip.getAudio() ); //attach the event loop to the currentAudioStrip's audio object.
     } else {
       console.error(ERROR_IDENTIFIER, "The object passed to 'setCurrentAudioStrip()' is not of type AudioStrip");
@@ -262,11 +264,40 @@ function NRSaudioManager() {
     }
   }
 
+  function bufferAudioOnTouch(){
+    var audio = currentAudioStrip.getAudio(); //get the audio of the currentAudioStrip
+    document.addEventListener("click", function (event){
+    	console.log("clicked");
+      if(!wasBufferedOnTouch){
+        console.log("buffering");
+
+        audio.currentTime = 0;
+        audio.play();
+        wasBufferedOnTouch = true;
+      }
+    }, false);
+
+    setTimeout(function(){
+      audio.pause();
+      console.log(audio.played);
+    }, 250);
+
+  }
+
+  function isMobileDevice(){
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+       return true;
+    }else{
+      return true;
+    }
+  }
+
   /*CONSTRUCTOR INSTRUCTIONS*/
     //do the following when creating a new instance of this class:
     //Create dom container for <audio> elements belonging to the AudioStrips.
     startTime = new Date().getTime();
     createDomContainer();
+
     setInterval(AudioManagerLoop2, 10);
 
 };

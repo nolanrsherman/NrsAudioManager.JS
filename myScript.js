@@ -41,4 +41,4 @@ var myAudioManager = new NRSaudioManager();
 myAudioManager.setCurrentAudioStrip(myAudioStrip);
 
 //start background music.
-myAudioManager.setBackgroundMusic('three');
+//myAudioManager.setBackgroundMusic('three');
