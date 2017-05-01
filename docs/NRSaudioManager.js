@@ -273,14 +273,15 @@ function NRSaudioManager() {
 
         audio.currentTime = 0;
         audio.play();
+        setTimeout(function(){
+          audio.pause();
+          console.log(audio.played);
+        }, 100);
         wasBufferedOnTouch = true;
       }
     }, false);
 
-    setTimeout(function(){
-      audio.pause();
-      console.log(audio.played);
-    }, 250);
+
 
   }
 
