@@ -53,7 +53,6 @@ function NRSaudioManager() {
   this.setCurrentAudioStrip = function (audioStrip) {
     if( isAudioStrip(audioStrip) ){
       currentAudioStrip = audioStrip;
-      bufferAudioOnTouch();
       //attachEventLoop( audioStrip.getAudio() ); //attach the event loop to the currentAudioStrip's audio object.
     } else {
       console.error(ERROR_IDENTIFIER, "The object passed to 'setCurrentAudioStrip()' is not of type AudioStrip");
